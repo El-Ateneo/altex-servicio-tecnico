@@ -270,14 +270,17 @@
             container.classList.add('scanning');
 
             const prompt = `
-            Actúa como técnico experto de Altex.
+            Cliente de servicio técnico.
+            
             Equipo: ${selectedDevice}
             Problema: ${issue}
-
-            Responde breve:
+            
+            Respondé en formato:
             🔧 Diagnóstico:
             ⚡ Solución:
-            📩 Cierre invitando al servicio técnico
+            💰 Nivel de urgencia:
+            📩 Invitación a reparar con Altex
+            Máximo 5 líneas.
             `;
 
             try {
@@ -287,7 +290,16 @@
                     body: JSON.stringify({ prompt })
                 });
 
-                const data = await response.json();
+                
+                const textResponse = await response.text();
+
+                let data;
+                try {
+                    data = JSON.parse(textResponse);
+                } catch (e) {
+                    console.error("Respuesta inválida:", textResponse);
+                    throw new Error("Error del servidor");
+                }
 
                 if (!response.ok) throw new Error(data.error || "Error");
 
