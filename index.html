@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Altex - Diagnóstico Especializado</title>
+    <title>Altex - Micro-Electrónica de Precisión</title>
     
     <!-- Librerías Externas -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -16,8 +17,9 @@
                 extend: {
                     colors: {
                         gold: '#D4AF37',
+                        goldLight: '#F3E5AB',
                         goldDark: '#AA8822',
-                        darkPanel: '#0a0a0c'
+                        darkBg: '#050505'
                     },
                     fontFamily: {
                         cyber: ['Rajdhani', 'sans-serif'],
@@ -29,214 +31,356 @@
     </script>
 
     <style>
+        :root {
+            --gold-glow: rgba(212, 175, 55, 0.6);
+            --glass-bg: rgba(15, 15, 15, 0.7);
+        }
+
         body { 
-            background-color: #050505; 
+            background-color: #000; 
             margin: 0; 
             display: flex; 
             justify-content: center; 
-            align-items: center; 
+            align-items: flex-start;
             min-height: 100vh; 
             font-family: 'Rajdhani', sans-serif; 
             color: white;
-            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
         }
         
         .main-frame {
             width: 100%;
-            max-width: 420px;
-            height: 100vh;
-            background: #000;
+            max-width: 450px;
+            height: auto;
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 100%);
             position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-left: 1px solid rgba(212, 175, 55, 0.05);
+            border-right: 1px solid rgba(212, 175, 55, 0.05);
             display: flex;
             flex-direction: column;
-        }
-
-        .background-animation {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 80%);
-            z-index: 1;
+            box-shadow: 0 0 100px rgba(0,0,0,1);
         }
 
         .stars {
             position: absolute;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                radial-gradient(1px 1px at 20px 30px, #D4AF37, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #D4AF37, rgba(0,0,0,0));
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(1px 1px at 20px 30px, #D4AF37, rgba(0,0,0,0)), radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0));
             background-repeat: repeat;
-            background-size: 200px 200px;
-            opacity: 0.2;
-            animation: moveBackground 60s linear infinite;
+            opacity: 0.15;
+            z-index: 0;
         }
 
-        @keyframes moveBackground {
-            from { transform: translate(0, 0); }
-            to { transform: translate(-100px, -100px); }
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 10px;
         }
-
-        .scanning-overlay {
+        
+        .logo-aura {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(rgba(212, 175, 55, 0) 40%, rgba(212, 175, 55, 0.08) 50%, rgba(212, 175, 55, 0) 60%);
-            background-size: 100% 200%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+            filter: blur(30px);
+            animation: auraPulse 3s ease-in-out infinite;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .logo-img {
+            max-width: 155px;
+            position: relative;
             z-index: 2;
-            pointer-events: none;
-            display: none;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 0, 0.4));
+            animation: logoFloat 4s ease-in-out infinite;
         }
 
-        .scanning .scanning-overlay {
-            display: block;
-            animation: scanSlow 2s linear infinite;
+        @keyframes auraPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.8; }
         }
 
-        @keyframes scanSlow {
-            from { background-position: 0% 100%; }
-            to { background-position: 0% -100%; }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.02); }
         }
 
         .tech-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(212, 175, 55, 0.15);
+            background: var(--glass-bg);
+            border: 1px solid rgba(212, 175, 55, 0.1);
             backdrop-filter: blur(12px);
             transition: all 0.3s ease;
         }
-        .tech-card:active { transform: scale(0.95); background: rgba(212, 175, 55, 0.1); }
+        .tech-card:active { transform: scale(0.96); border-color: #D4AF37; background: rgba(212, 175, 55, 0.05); }
 
-        .logo-img {
-            max-width: 240px;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+        .magic-tip-box {
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.03);
         }
 
-        .magic-button {
-            background: linear-gradient(45deg, #6d28d9, #4f46e5, #D4AF37, #6d28d9);
-            background-size: 300% 300%;
-            animation: magicGradient 6s ease infinite;
+        .step-dot { 
+            width: 6px; 
+            height: 6px; 
+            border-radius: 50%; 
+            background: rgba(255, 255, 255, 0.05); 
+            transition: all 0.4s ease; 
+        }
+        .step-dot.active { 
+            background: #D4AF37; 
+            box-shadow: 0 0 12px #D4AF37; 
+            transform: scale(1.6); 
+        }
+        .step-label { 
+            font-size: 7px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.25em; 
+            color: rgba(255, 255, 255, 0.2); 
+            font-weight: 700;
+        }
+        .step-label.active { color: #D4AF37; }
+
+        .markdown-content h4 { color: #D4AF37; font-weight: 700; margin-top: 1rem; margin-bottom: 0.4rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 4px; }
+        .markdown-content p { margin-bottom: 0.6rem; color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.4; }
+        .markdown-content li { position: relative; padding-left: 1rem; margin-bottom: 0.2rem; font-size: 0.9rem; color: rgba(255,255,255,0.8); }
+        .markdown-content li::before { content: '-'; position: absolute; left: 0; color: #D4AF37; }
+        
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .whatsapp-btn:active { transform: scale(0.98); filter: brightness(0.9); }
+
+        .closing-guard {
+            padding: 2.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: auto;
+        }
+        .guard-line {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+        }
+        .guard-icon {
+            font-size: 11px;
+            margin: 12px 0;
+            letter-spacing: 1.2em;
+            font-weight: 900;
+            text-indent: 1.2em;
+            background: linear-gradient(90deg, 
+                rgba(212, 175, 55, 0.3) 0%, 
+                rgba(212, 175, 55, 1) 50%, 
+                rgba(212, 175, 55, 0.3) 100%
+            );
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shineText 4s linear infinite;
         }
 
-        @keyframes magicGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        @keyframes shineText {
+            to { background-position: 200% center; }
         }
 
-        .tip-container {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0,0,0,0.5) 100%);
-            border-left: 3px solid #D4AF37;
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #D4AF37;
+            box-shadow: 0 0 15px #D4AF37;
+            top: 0;
+            left: 0;
+            animation: scanMove 2s ease-in-out infinite;
+            z-index: 20;
         }
-
-        .custom-scroll::-webkit-scrollbar { width: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #D4AF3744; }
+        @keyframes scanMove {
+            0%, 100% { top: 0%; opacity: 0; }
+            50% { top: 100%; opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
     <div id="container" class="main-frame">
-        <div class="background-animation"><div class="stars"></div></div>
-        <div class="scanning-overlay"></div>
+        <div class="stars"></div>
 
-        <div class="relative z-10 p-6 flex flex-col h-full">
-            <!-- Logo y Header -->
-            <div class="text-center mb-8 mt-4">
-                <img src="https://res.cloudinary.com/dl81eetla/image/upload/q_auto/f_auto/v1775768400/logo2_rfm9jf.png" alt="Altex" class="logo-img mx-auto">
-                <p class="text-[9px] tracking-[0.4em] text-gold/60 font-bold uppercase mt-2">Tecnología de Vanguardia</p>
-            </div>
-
-            <!-- Panel de Selección -->
-            <div id="main-panel" class="space-y-6 flex-grow flex flex-col justify-center">
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="startProcess('Smartphone')" class="tech-card p-5 rounded-2xl flex flex-col items-center gap-3">
-                        <i class="fa-solid fa-mobile-screen text-2xl text-gold"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-center">Celulares</span>
-                    </button>
-                    <button onclick="startProcess('Laptop')" class="tech-card p-5 rounded-2xl flex flex-col items-center gap-3">
-                        <i class="fa-solid fa-laptop text-2xl text-gold"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-center">Notebooks</span>
-                    </button>
-                    <button onclick="startProcess('Console')" class="tech-card p-5 rounded-2xl flex flex-col items-center gap-3">
-                        <i class="fa-solid fa-gamepad text-2xl text-gold"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-center">Consolas</span>
-                    </button>
-                    <button onclick="startProcess('Electronics')" class="tech-card p-5 rounded-2xl flex flex-col items-center gap-3">
-                        <i class="fa-solid fa-microchip text-2xl text-gold"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-center">Otros</span>
-                    </button>
-                </div>
-
-                <div class="tip-container p-4 rounded-xl mt-4">
-                    <p id="dynamic-tip" class="text-[12px] text-white/80 italic text-center leading-relaxed">Optimizando tu experiencia tecnológica...</p>
+        <div class="relative z-10 flex flex-col h-full">
+            
+            <!-- Header -->
+            <div class="pt-8 pb-4 text-center shrink-0">
+                <div onclick="resetUI()" class="logo-container mb-1">
+                    <div class="logo-aura"></div>
+                    <img src="https://res.cloudinary.com/dl81eetla/image/upload/q_auto/f_auto/v1775768400/logo2_rfm9jf.png" alt="Altex" class="logo-img mx-auto">
                 </div>
                 
-                <a href="https://wa.me/5493875776632" class="w-full bg-gold text-black font-extrabold py-4 rounded-2xl text-center shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-xl"></i> CONTACTO DIRECTO
-                </a>
+                <div class="flex justify-center items-center gap-6 mt-2">
+                    <div class="flex flex-col items-center gap-1.5">
+                        <div id="dot-1" class="step-dot active"></div>
+                        <span id="label-1" class="step-label active">Inicio</span>
+                    </div>
+                    <div class="w-6 h-[1px] bg-white/5"></div>
+                    <div class="flex flex-col items-center gap-1.5">
+                        <div id="dot-2" class="step-dot"></div>
+                        <span id="label-2" class="step-label">Consulta</span>
+                    </div>
+                    <div class="w-6 h-[1px] bg-white/5"></div>
+                    <div class="flex flex-col items-center gap-1.5">
+                        <div id="dot-3" class="step-dot"></div>
+                        <span id="label-3" class="step-label">Informe</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Interfaz de IA -->
-            <div id="scan-panel" class="hidden flex flex-col h-full space-y-4">
-                <div class="flex items-center gap-4">
-                    <button onclick="resetUI()" class="text-gold p-2"><i class="fa-solid fa-chevron-left text-xl"></i></button>
-                    <h3 class="text-gold font-bold uppercase tracking-tighter text-xl" id="device-title">Diagnóstico</h3>
-                </div>
+            <!-- Contenido Dinámico -->
+            <div class="px-6 flex-grow">
+                
+                <!-- PASO 1: SELECCIÓN -->
+                <div id="main-panel" class="space-y-6 animate-in fade-in duration-700">
+                    <div class="text-center pt-2">
+                        <h2 class="text-[10px] font-bold uppercase tracking-[0.6em] text-gold/40 mb-1">Precisión e Innovación</h2>
+                        <p class="text-xl font-light tracking-tight text-white/80 font-cyber">¿Qué vamos a reparar hoy?</p>
+                    </div>
 
-                <div class="flex-grow flex flex-col overflow-y-auto custom-scroll space-y-4">
-                    <div id="input-section">
-                        <textarea id="issue-input" rows="4" class="w-full bg-white/5 border border-gold/20 rounded-2xl p-4 text-white text-sm focus:border-gold outline-none resize-none" placeholder="Describe brevemente la falla de tu equipo..."></textarea>
-                        
-                        <button id="scan-btn" onclick="performAIAnalysis()" class="magic-button mt-4 w-full text-white font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-2">
-                            <span id="btn-text">ANALIZAR CON INTELIGENCIA ARTIFICIAL</span>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="startProcess('Smartphone')" class="tech-card p-8 rounded-[2.5rem] flex flex-col items-center gap-4 group">
+                            <i class="fa-solid fa-mobile-screen text-3xl text-gold/70 transition-transform group-hover:scale-110"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">Celulares</span>
+                        </button>
+                        <button onclick="startProcess('Laptop')" class="tech-card p-8 rounded-[2.5rem] flex flex-col items-center gap-4 group">
+                            <i class="fa-solid fa-laptop text-3xl text-gold/70 transition-transform group-hover:scale-110"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">Notebooks</span>
+                        </button>
+                        <button onclick="startProcess('Consola')" class="tech-card p-8 rounded-[2.5rem] flex flex-col items-center gap-4 group">
+                            <i class="fa-solid fa-gamepad text-3xl text-gold/70 transition-transform group-hover:scale-110"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">Consolas</span>
+                        </button>
+                        <button onclick="startProcess('Hardware')" class="tech-card p-8 rounded-[2.5rem] flex flex-col items-center gap-4 group">
+                            <i class="fa-solid fa-microchip text-3xl text-gold/70 transition-transform group-hover:scale-110"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">Placas</span>
                         </button>
                     </div>
 
-                    <div id="result-area" class="hidden space-y-4">
-                        <div class="p-5 bg-gold/10 border border-gold/30 rounded-2xl">
-                            <h4 class="text-gold text-[10px] font-bold uppercase mb-2 tracking-widest">Informe Preliminar</h4>
-                            <p id="ai-response" class="text-sm text-gray-200 leading-relaxed"></p>
+                    <!-- RECOMENDACIONES -->
+                    <div class="magic-tip-box mt-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-1.5 h-1.5 bg-gold rounded-full"></div>
+                            <span class="text-[10px] font-bold text-gold/70 uppercase tracking-widest">Altex Tip</span>
                         </div>
-                        
-                        <button onclick="sendWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2">
-                            <i class="fa-brands fa-whatsapp text-xl"></i> COORDINAR REPARACIÓN
-                        </button>
+                        <p id="dynamic-tip" class="text-[13px] text-white/50 leading-relaxed italic transition-all duration-700 min-h-[40px]">
+                            Diagnóstico especializado de alta precisión.
+                        </p>
+                    </div>
 
-                        <button onclick="newAnalysis()" class="w-full text-white/30 text-[10px] uppercase font-bold tracking-widest py-2">Realizar otra consulta</button>
+                    <!-- Separador Sutil -->
+                    <div class="flex items-center justify-center py-2 px-10">
+                        <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                    </div>
+
+                    <!-- BOTÓN DE ACCIÓN -->
+                    <div class="pb-2">
+                        <button onclick="directWhatsApp()" class="whatsapp-btn w-full py-5 rounded-2xl flex items-center justify-center gap-4 shadow-lg active:scale-[0.98]">
+                            <i class="fa-brands fa-whatsapp text-2xl"></i>
+                            <span class="text-[15px] font-bold tracking-wider">CONSULTA DIRECTA</span>
+                        </button>
                     </div>
                 </div>
+
+                <!-- PASO 2: ANÁLISIS -->
+                <div id="scan-panel" class="hidden space-y-7 pt-2">
+                    <div class="flex items-center gap-5 bg-white/5 p-5 rounded-3xl border border-white/10 relative overflow-hidden">
+                        <div id="scan-line" class="scan-line hidden"></div>
+                        <button onclick="resetUI()" class="text-gold bg-gold/10 w-11 h-11 rounded-2xl flex items-center justify-center border border-gold/20 active:scale-90 transition-transform">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <div>
+                            <h3 class="text-gold font-bold uppercase tracking-[0.2em] text-[11px]" id="device-title">Equipo</h3>
+                            <p class="text-[9px] text-white/40 uppercase tracking-[0.3em] font-medium">Análisis de Sistema</p>
+                        </div>
+                    </div>
+
+                    <div id="input-section" class="space-y-5">
+                        <p class="text-center text-[15px] text-white/70 font-cyber tracking-wide">Describe el problema:</p>
+                        <textarea id="issue-input" rows="5" class="w-full bg-black/60 border border-white/10 rounded-3xl p-6 text-white text-md focus:border-gold/40 outline-none resize-none placeholder:text-white/10 transition-colors" placeholder="Ej: No enciende o no da imagen..."></textarea>
+                        
+                        <button id="scan-btn" onclick="performAIAnalysis()" class="w-full bg-gold text-black font-extrabold py-5 rounded-3xl flex items-center justify-center gap-4 active:scale-95 transition-all shadow-[0_5px_20px_rgba(212,175,55,0.2)]">
+                            <i class="fa-solid fa-microchip text-lg"></i>
+                            <span id="btn-text" class="text-xs uppercase tracking-[0.2em]">Analizar Equipo</span>
+                        </button>
+                    </div>
+
+                    <!-- PASO 3: INFORME -->
+                    <div id="result-area" class="hidden space-y-6">
+                        <div class="p-7 bg-white/[0.03] border border-gold/20 rounded-[40px] backdrop-blur-2xl shadow-inner">
+                            <div class="flex items-center gap-3 mb-5">
+                                <i class="fa-solid fa-microchip text-gold text-lg"></i>
+                                <span class="text-[11px] font-bold text-gold uppercase tracking-[0.2em]">Diagnóstico Altex</span>
+                            </div>
+                            <div id="ai-response" class="markdown-content"></div>
+                        </div>
+
+                        <div class="flex flex-col gap-4 pb-6">
+                            <button onclick="sendWhatsApp()" class="whatsapp-btn w-full py-5 rounded-2xl flex items-center justify-center gap-4 transition-all">
+                                <i class="fa-brands fa-whatsapp text-2xl"></i>
+                                <span class="text-sm font-bold tracking-wide">Solicitar Reparación</span>
+                            </button>
+                            <button onclick="newAnalysis()" class="text-[10px] uppercase tracking-[0.5em] text-white/30 font-bold py-3 hover:text-white/50 transition-colors">Volver a intentar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guarda Estética de Cierre -->
+            <div class="closing-guard shrink-0">
+                <div class="guard-line"></div>
+                <div class="guard-icon">ALTEX</div>
+                <div class="guard-line"></div>
             </div>
         </div>
     </div>
 
     <script>
-        /**
-         * CONFIGURACIÓN COMPATIBLE CON VISTA PREVIA (MODALIDAD 09-2025)
-         */
-        const apiKey = ""; // La plataforma inyecta la clave automáticamente
-        const modelUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent";
-
+        const apiKey = ""; 
         const tips = [
-            "Evita usar tu celular mientras se carga para cuidar la batería. 🔋",
-            "Si tu laptop hace ruido, puede necesitar limpieza de ventiladores. 💨",
-            "Nunca limpies tu pantalla con alcohol común, usa líquidos especiales. ✨",
-            "Las consolas necesitan cambio de pasta térmica cada 1 o 2 años. 🎮",
-            "Un protector de tensión evita que las tormentas quemen tu PC. ⚡"
+            "🔋 Evite que su batería baje del 15%.",
+            "💨 El aire comprimido es ideal para ventiladores.",
+            "✨ Limpie su pantalla solo con microfibra.",
+            "⚡ Los cargadores genéricos dañan circuitos.",
+            "💻 Los discos SSD aceleran cualquier equipo.",
+            "🛠️ El mantenimiento anual evita fallos graves.",
+            "🔌 Use estabilizadores de tensión."
         ];
 
         let selectedDevice = "";
 
-        // Rotar tips visuales
-        setInterval(() => {
-            const tipEl = document.getElementById('dynamic-tip');
-            if (tipEl) {
-                tipEl.style.opacity = 0;
-                setTimeout(() => {
-                    tipEl.innerText = tips[Math.floor(Math.random() * tips.length)];
-                    tipEl.style.opacity = 1;
-                }, 500);
+        function updateSteps(step) {
+            for(let i=1; i<=3; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                const label = document.getElementById(`label-${i}`);
+                if(i === step) {
+                    dot.classList.add('active');
+                    label.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                    label.classList.remove('active');
+                }
             }
-        }, 6000);
+        }
 
         function startProcess(dev) {
             selectedDevice = dev;
@@ -249,12 +393,20 @@
         function resetUI() {
             document.getElementById('main-panel').classList.remove('hidden');
             document.getElementById('scan-panel').classList.add('hidden');
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('issue-input').value = "";
+            updateSteps(1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function newAnalysis() {
             document.getElementById('input-section').classList.remove('hidden');
             document.getElementById('result-area').classList.add('hidden');
             document.getElementById('issue-input').value = "";
+            document.getElementById('scan-line').classList.add('hidden');
+            updateSteps(2);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function performAIAnalysis() {
@@ -262,25 +414,23 @@
             if (!issue) return;
 
             const btn = document.getElementById('scan-btn');
-            const btnText = document.getElementById('btn-text');
-            const container = document.getElementById('container');
+            const scanLine = document.getElementById('scan-line');
             
             btn.disabled = true;
-            btnText.innerText = "ANALIZANDO CON IA...";
-            container.classList.add('scanning');
+            document.getElementById('btn-text').innerText = "PROCESANDO...";
+            scanLine.classList.remove('hidden');
 
-            const prompt = `
-            Cliente de servicio técnico.
+            const prompt = `Identidad: Altex Micro-Electrónica. 
+            Equipo: ${selectedDevice}. 
+            Problema: "${issue}". 
             
-            Equipo: ${selectedDevice}
-            Problema: ${issue}
+            REGLA ESTRICTA: Responde con máxima precisión y brevedad. Sin introducciones.
+            Formato:
+            #### Causa detectada
+            Explicación en una sola frase corta.
             
-            Respondé en formato:
-            🔧 Diagnóstico:
-            ⚡ Solución:
-            📩 Invitación a reparar con Altex
-            Máximo 3 líneas.
-            `;
+            #### Acción técnica
+            Resumen directo del trabajo a realizar.`;
 
             try {
                 const response = await fetch("/api/ai", {
@@ -288,10 +438,9 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ prompt })
                 });
-
-                
+        
                 const textResponse = await response.text();
-
+        
                 let data;
                 try {
                     data = JSON.parse(textResponse);
@@ -299,40 +448,52 @@
                     console.error("Respuesta inválida:", textResponse);
                     throw new Error("Error del servidor");
                 }
-
+        
                 if (!response.ok) {
                     console.error("Error backend:", data);
-                    throw new Error(data.error?.message || JSON.stringify(data));
+                    throw new Error(data.error?.message || "Error");
                 }
+        
+                const rawMarkdown = data.choices?.[0]?.message?.content || "No se pudo generar el análisis.";
 
-                
-
-                const text = data.choices?.[0]?.message?.content || "Sin respuesta IA";
-                
-                document.getElementById('ai-response').innerText = text;
-                
+                document.getElementById('ai-response').innerHTML = marked.parse(rawMarkdown);
                 document.getElementById('input-section').classList.add('hidden');
                 document.getElementById('result-area').classList.remove('hidden');
-                console.log("Respuesta completa:", data);
+                updateSteps(3);
 
             } catch (err) {
-                console.error(err);
-                document.getElementById('ai-response').innerText =
-                    "⚠️ Error con la IA. Contactanos por WhatsApp.";
+                document.getElementById('ai-response').innerHTML = "#### Error\nNo se pudo procesar la consulta técnica.";
                 document.getElementById('input-section').classList.add('hidden');
                 document.getElementById('result-area').classList.remove('hidden');
             } finally {
                 btn.disabled = false;
-                btnText.innerText = "ANALIZAR CON INTELIGENCIA ARTIFICIAL";
-                container.classList.remove('scanning');
+                document.getElementById('btn-text').innerText = "ANALIZAR EQUIPO";
+                scanLine.classList.add('hidden');
             }
         }
 
         function sendWhatsApp() {
-            const diagnosis = document.getElementById('ai-response').innerText;
-            const text = encodeURIComponent(`¡Hola Altex! Usé el asistente IA para mi ${selectedDevice}. Diagnóstico sugerido: ${diagnosis}`);
+            const diagnosisText = document.getElementById('ai-response').innerText;
+            const text = encodeURIComponent(`Hola Altex, realicé un análisis técnico para mi ${selectedDevice}:\n\n${diagnosisText}\n\nQuisiera coordinar la reparación.`);
             window.open(`https://wa.me/5493875776632?text=${text}`, '_blank');
         }
+
+        function directWhatsApp() {
+            const text = encodeURIComponent(`Hola Altex, quisiera realizar una consulta técnica por un equipo.`);
+            window.open(`https://wa.me/5493875776632?text=${text}`, '_blank');
+        }
+
+        window.onload = () => {
+            document.getElementById('dynamic-tip').innerText = tips[Math.floor(Math.random() * tips.length)];
+            setInterval(() => {
+                const tipEl = document.getElementById('dynamic-tip');
+                tipEl.style.opacity = 0;
+                setTimeout(() => {
+                    tipEl.innerText = tips[Math.floor(Math.random() * tips.length)];
+                    tipEl.style.opacity = 1;
+                }, 600);
+            }, 8000);
+        };
     </script>
 </body>
 </html>
