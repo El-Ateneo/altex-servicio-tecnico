@@ -1,29 +1,34 @@
 export default async function handler(req, res) {
-  const API_KEY = process.env.OPENAI_API_KEY;
+    try {
+        const { prompt } = req.body;
 
-  try {
-    const { prompt } = req.body;
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + process.env.GROQ_API_KEY
+            },
+            body: JSON.stringify({
+                model: "llama3-8b-8192",
+                messages: [
+                    {
+                        role: "system",
+                        content: "Sos un técnico experto en reparación de celulares, PC y consolas. Respondé claro, breve y profesional."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.7
+            })
+        });
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "user", content: prompt }
-        ],
-        max_tokens: 150
-      })
-    });
+        const data = await response.json();
 
-    const data = await response.json();
+        res.status(200).json(data);
 
-    res.status(200).json(data);
-
-  } catch (error) {
-    res.status(500).json({ error: "Error en servidor" });
-  }
+    } catch (error) {
+        res.status(500).json({ error: "Error en el servidor" });
+    }
 }
