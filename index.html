@@ -293,12 +293,13 @@
 
                 console.log("Respuesta completa:", data);
 
-                cconst text = data.choices?.[0]?.message?.content || "Sin respuesta IA";
+                const text = data.choices?.[0]?.message?.content || "Sin respuesta IA";
                 
                 document.getElementById('ai-response').innerText = text;
                 
                 document.getElementById('input-section').classList.add('hidden');
-                document.getElementById('result-area').classList.remove('hidden');console.log("Respuesta completa:", data);
+                document.getElementById('result-area').classList.remove('hidden');
+                console.log("Respuesta completa:", data);
 
             } catch (err) {
                 console.error(err);
