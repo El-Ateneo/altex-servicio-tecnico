@@ -293,10 +293,7 @@
 
                 console.log("Respuesta completa:", data);
 
-                const text =
-                    data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-                    data?.candidates?.[0]?.output_text ||
-                    "No se pudo generar diagnóstico.";
+                cconst text = data.choices?.[0]?.message?.content || "Sin respuesta IA";
                 
                 document.getElementById('ai-response').innerText = text;
                 
