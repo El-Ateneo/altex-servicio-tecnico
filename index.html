@@ -291,15 +291,17 @@
 
                 if (!response.ok) throw new Error(data.error || "Error");
 
-                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                console.log("Respuesta completa:", data);
 
-                if (text) {
-                    document.getElementById('ai-response').innerText = text;
-                    document.getElementById('input-section').classList.add('hidden');
-                    document.getElementById('result-area').classList.remove('hidden');
-                } else {
-                    throw new Error("Sin respuesta");
-                }
+                const text =
+                    data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+                    data?.candidates?.[0]?.output_text ||
+                    "No se pudo generar diagnóstico.";
+                
+                document.getElementById('ai-response').innerText = text;
+                
+                document.getElementById('input-section').classList.add('hidden');
+                document.getElementById('result-area').classList.remove('hidden');console.log("Respuesta completa:", data);
 
             } catch (err) {
                 console.error(err);
