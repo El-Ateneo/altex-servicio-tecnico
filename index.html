@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Altex - Diagnóstico Especializado</title>
+    
+    <!-- Librerías Externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#D4AF37',
+                        goldDark: '#AA8822',
+                        darkPanel: '#0a0a0c'
+                    },
+                    fontFamily: {
+                        cyber: ['Rajdhani', 'sans-serif'],
+                        logo: ['Cinzel', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            background-color: #050505; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            font-family: 'Rajdhani', sans-serif; 
+            color: white;
+            overflow: hidden;
+        }
+        
+        .main-frame {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .background-animation {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 80%);
+            z-index: 1;
+        }
+
+        .stars {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #D4AF37, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #D4AF37, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.2;
+            animation: moveBackground 60s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            from { transform: translate(0, 0); }
+            to { transform: translate(-100px, -100px); }
+        }
+
+        .scanning-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(212, 175, 55, 0) 40%, rgba(212, 175, 55, 0.08) 50%, rgba(212, 175, 55, 0) 60%);
+            background-size: 100% 200%;
+            z-index: 2;
+            pointer-events: none;
+            display: none;
+        }
+
+        .scanning .scanning-overlay {
+            display: block;
+            animation: scanSlow 2s linear infinite;
+        }
+
+        @keyframes scanSlow {
+            from { background-position: 0% 100%; }
+            to { background-position: 0% -100%; }
+        }
+
+        .tech-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+        .tech-card:active { transform: scale(0.95); background: rgba(212, 175, 55, 0.1); }
+
+        .logo-img {
+            max-width: 240px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+        }
+
+        .magic-button {
+            background: linear-gradient(45deg, #6d28d9, #4f46e5, #D4AF37, #6d28d9);
+            background-size: 300% 300%;
+            animation: magicGradient 6s ease infinite;
+        }
+
+        @keyframes magicGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .tip-container {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0,0,0,0.5) 100%);
+            border-left: 3px solid #D4AF37;
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #D4AF3744; }
+    </style>
+</head>
+<body>
+
+    <div id="container" class="main-frame">
+        <div class="background-animation"><div class="stars"></div></div>
+        <div class="scanning-overlay"></div>
+
+        <div class="relative z-10 p-6 flex flex-col h-full">
+            <!-- Logo y Header -->
+            <div class="text-center mb-8 mt-4">
+                <img src="https://res.cloudinary.com/dl81eetla/image/upload/q_auto/f_auto/v1775768400/logo2_rfm9jf.png" alt="Altex" class="logo-img mx-auto">
+                <p class="text-[9px] tracking-[0.4em] text-gold/60 font-bold uppercase mt-2">Tecnología de Vanguardia</p>
+            </div>
+
+            <!-- Panel de Selección -->
+            <div id="main-panel" class="space-y-6 flex-grow flex flex-col justify-center">
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="startProcess('Smartphone')" class="tech-card p-5 rounded-2xl flex flex-col items-center gap-3">
+                        <i class="fa-solid fa-mobile-screen text-2xl text-gold"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-center">Celulares</span>
+                    </button>
+                    <button onclick="startProcess('Laptop')" class="tech-card p-5 rounded-2xl flex flex-col items-center gap-3">
+                        <i class="fa-solid fa-laptop text-2xl text-gold"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-center">Notebooks</span>
+                    </button>
+                    <button onclick="startProcess('Console')" class="tech-card p-5 rounded-2xl flex flex-col items-center gap-3">
+                        <i class="fa-solid fa-gamepad text-2xl text-gold"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-center">Consolas</span>
+                    </button>
+                    <button onclick="startProcess('Electronics')" class="tech-card p-5 rounded-2xl flex flex-col items-center gap-3">
+                        <i class="fa-solid fa-microchip text-2xl text-gold"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-center">Otros</span>
+                    </button>
+                </div>
+
+                <div class="tip-container p-4 rounded-xl mt-4">
+                    <p id="dynamic-tip" class="text-[12px] text-white/80 italic text-center leading-relaxed">Optimizando tu experiencia tecnológica...</p>
+                </div>
+                
+                <a href="https://wa.me/5493875776632" class="w-full bg-gold text-black font-extrabold py-4 rounded-2xl text-center shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-xl"></i> CONTACTO DIRECTO
+                </a>
+            </div>
+
+            <!-- Interfaz de IA -->
+            <div id="scan-panel" class="hidden flex flex-col h-full space-y-4">
+                <div class="flex items-center gap-4">
+                    <button onclick="resetUI()" class="text-gold p-2"><i class="fa-solid fa-chevron-left text-xl"></i></button>
+                    <h3 class="text-gold font-bold uppercase tracking-tighter text-xl" id="device-title">Diagnóstico</h3>
+                </div>
+
+                <div class="flex-grow flex flex-col overflow-y-auto custom-scroll space-y-4">
+                    <div id="input-section">
+                        <textarea id="issue-input" rows="4" class="w-full bg-white/5 border border-gold/20 rounded-2xl p-4 text-white text-sm focus:border-gold outline-none resize-none" placeholder="Describe brevemente la falla de tu equipo..."></textarea>
+                        
+                        <button id="scan-btn" onclick="performAIAnalysis()" class="magic-button mt-4 w-full text-white font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-2">
+                            <span id="btn-text">ANALIZAR CON INTELIGENCIA ARTIFICIAL</span>
+                        </button>
+                    </div>
+
+                    <div id="result-area" class="hidden space-y-4">
+                        <div class="p-5 bg-gold/10 border border-gold/30 rounded-2xl">
+                            <h4 class="text-gold text-[10px] font-bold uppercase mb-2 tracking-widest">Informe Preliminar</h4>
+                            <p id="ai-response" class="text-sm text-gray-200 leading-relaxed"></p>
+                        </div>
+                        
+                        <button onclick="sendWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-xl"></i> COORDINAR REPARACIÓN
+                        </button>
+
+                        <button onclick="newAnalysis()" class="w-full text-white/30 text-[10px] uppercase font-bold tracking-widest py-2">Realizar otra consulta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * CONFIGURACIÓN COMPATIBLE CON VISTA PREVIA (MODALIDAD 09-2025)
+         */
+        const apiKey = ""; // La plataforma inyecta la clave automáticamente
+        const modelUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent";
+
+        const tips = [
+            "Evita usar tu celular mientras se carga para cuidar la batería. 🔋",
+            "Si tu laptop hace ruido, puede necesitar limpieza de ventiladores. 💨",
+            "Nunca limpies tu pantalla con alcohol común, usa líquidos especiales. ✨",
+            "Las consolas necesitan cambio de pasta térmica cada 1 o 2 años. 🎮",
+            "Un protector de tensión evita que las tormentas quemen tu PC. ⚡"
+        ];
+
+        let selectedDevice = "";
+
+        // Rotar tips visuales
+        setInterval(() => {
+            const tipEl = document.getElementById('dynamic-tip');
+            if (tipEl) {
+                tipEl.style.opacity = 0;
+                setTimeout(() => {
+                    tipEl.innerText = tips[Math.floor(Math.random() * tips.length)];
+                    tipEl.style.opacity = 1;
+                }, 500);
+            }
+        }, 6000);
+
+        function startProcess(dev) {
+            selectedDevice = dev;
+            document.getElementById('main-panel').classList.add('hidden');
+            document.getElementById('scan-panel').classList.remove('hidden');
+            document.getElementById('device-title').innerText = dev;
+            newAnalysis();
+        }
+
+        function resetUI() {
+            document.getElementById('main-panel').classList.remove('hidden');
+            document.getElementById('scan-panel').classList.add('hidden');
+        }
+
+        function newAnalysis() {
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('issue-input').value = "";
+        }
+
+        async function performAIAnalysis() {
+            const issue = document.getElementById('issue-input').value.trim();
+            if (!issue) return;
+
+            const btn = document.getElementById('scan-btn');
+            const btnText = document.getElementById('btn-text');
+            const container = document.getElementById('container');
+            
+            btn.disabled = true;
+            btnText.innerText = "ANALIZANDO CON IA...";
+            container.classList.add('scanning');
+
+            const prompt = `
+            Actúa como técnico experto de Altex.
+            Equipo: ${selectedDevice}
+            Problema: ${issue}
+
+            Responde breve:
+            🔧 Diagnóstico:
+            ⚡ Solución:
+            📩 Cierre invitando al servicio técnico
+            `;
+
+            try {
+                const response = await fetch("/.netlify/functions/gemini", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.error || "Error");
+
+                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (text) {
+                    document.getElementById('ai-response').innerText = text;
+                    document.getElementById('input-section').classList.add('hidden');
+                    document.getElementById('result-area').classList.remove('hidden');
+                } else {
+                    throw new Error("Sin respuesta");
+                }
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('ai-response').innerText =
+                    "⚠️ Error con la IA. Contactanos por WhatsApp.";
+                document.getElementById('input-section').classList.add('hidden');
+                document.getElementById('result-area').classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "ANALIZAR CON INTELIGENCIA ARTIFICIAL";
+                container.classList.remove('scanning');
+            }
+        }
+
+        function sendWhatsApp() {
+            const diagnosis = document.getElementById('ai-response').innerText;
+            const text = encodeURIComponent(`¡Hola Altex! Usé el asistente IA para mi ${selectedDevice}. Diagnóstico sugerido: ${diagnosis}`);
+            window.open(`https://wa.me/5493875776632?text=${text}`, '_blank');
+        }
+    </script>
+</body>
+</html>
