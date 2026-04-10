@@ -278,9 +278,8 @@
             Respondé en formato:
             🔧 Diagnóstico:
             ⚡ Solución:
-            💰 Nivel de urgencia:
             📩 Invitación a reparar con Altex
-            Máximo 5 líneas.
+            Máximo 3 líneas.
             `;
 
             try {
@@ -306,7 +305,7 @@
                     throw new Error(data.error?.message || JSON.stringify(data));
                 }
 
-                console.log("Respuesta completa:", data);
+                
 
                 const text = data.choices?.[0]?.message?.content || "Sin respuesta IA";
                 
