@@ -301,7 +301,10 @@
                     throw new Error("Error del servidor");
                 }
 
-                if (!response.ok) throw new Error(data.error || "Error");
+                if (!response.ok) {
+                    console.error("Error backend:", data);
+                    throw new Error(data.error?.message || JSON.stringify(data));
+                }
 
                 console.log("Respuesta completa:", data);
 
